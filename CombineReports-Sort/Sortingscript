@@ -47,3 +47,41 @@ For Each Workstation In findworkstations
   End If
 Selection.AutoFilter
 Next
+For Each Printer In findprinters
+  Cells(1, 1).Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$1:$AK$15000").AutoFilter Field:=2, Criteria1:=Printer
+  If ActiveSheet.AutoFilter.FilterMode = True Then
+    Range("A2:E10000").Select
+    Selection.Copy
+    Sheets("PRINTERS").Select
+    Cells(1, 1).Activate
+    While IsEmpty(ActiveCell.Value) = Flase
+      ActiveCell.Offset(1, 0).Activate
+    Wend
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    Sheets("Blanks").Activate
+    Selection.EntireRow.Delete
+  End If
+Selection.AutoFilter
+Next
+For Each Server In findservers
+  Cells(1, 1).Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$1:$AK$15000").AutoFilter Field:=2, Criteria1:=Server
+  If ActiveSheet.AutoFilter.FilterMode = True Then
+    Range("A2:E10000").Select
+    Selection.Copy
+    Sheets("SERVERS").Select
+    Cells(1, 1).Activate
+    While IsEmpty(ActiveCell.Value) = Flase
+      ActiveCell.Offset(1, 0).Activate
+    Wend
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    Sheets("Blanks").Activate
+    Selection.EntireRow.Delete
+  End If
+Selection.AutoFilter
+Next
