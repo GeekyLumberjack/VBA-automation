@@ -1,3 +1,5 @@
+'' This script uses a function called CollectionContains that is defined in a different file. 
+'' In order to use this script you will need to get the file called FunctionCollectionConatins located in VBA-automation repository.
 Dim iavalist As Collection
 Set iavalist = New Collection
 Dim noncompliant As Integer
