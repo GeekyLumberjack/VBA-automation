@@ -39,15 +39,46 @@ With ie
             oldrmquest = ele(i).getElementsByTagName("td")(0).innerText
             rmquest = Replace(oldrmquest, ChrW(8206), "")
             strdate = rmquest
-            strprice = le(i).getElementsByTagName("td")(4).innerText
+            strprice = ele(i).getElementsByTagName("td")(4).innerText
             MsgBox (strprice)
         End If
         End If
         If fend = True Then
-        nxtprice = ele(i - 1).getElementsByTagName("td")(4).innerText
-        nxtdate = ele(i - 1).getElementsByTagName("td")(0).innerText
+        If ele(i - 1).getElementsByTagName("td").Length < 4 And i > 1 Then
+            MsgBox (i)
+            nxtprice = ele(i - 2).getElementsByTagName("td")(4).innerText
+            nxtdate = ele(i - 2).getElementsByTagName("td")(0).innerText
+        Else
+            nxtprice = ele(i - 1).getElementsByTagName("td")(4).innerText
+           ' MsgBox (ele(i - 1).getElementsByTagName("td").Length)
+            nxtdate = ele(i - 1).getElementsByTagName("td")(0).innerText
+        End If
+        
         chng1 = nxtprice - strprice
         chng = chng1 / strprice * 100
+       ' MsgBox (chng)
+        If trade = True Then
+            If chng >= 30 Then
+                trade = False
+                ActiveCell.Offset(0, 3).Activate
+                ActiveCell.Value = nxtdate
+                ActiveCell.Offset(0, 1).Activate
+                ActiveCell.Value = nxtprice
+                ActiveCell.Offset(0, 1).Activate
+                ActiveCell.Value = "Yes"
+                ActiveCell.Offset(0, -5).Activate
+            End If
+            If chng <= -15 Then
+                trade = False
+                ActiveCell.Offset(0, 3).Activate
+                ActiveCell.Value = nxtdate
+                ActiveCell.Offset(0, 1).Activate
+                ActiveCell.Value = nxtprice
+                ActiveCell.Offset(0, 1).Activate
+                ActiveCell.Value = "No"
+                ActiveCell.Offset(0, -5).Activate
+            End If
+        End If
         If trade = False Then
             If chng >= 15 Then
                 strdate = nxtdate
@@ -56,18 +87,21 @@ With ie
             If chng <= -40 Then
                 Cells(1, 1).Select
                 While IsEmpty(ActiveCell.Value) = False
-                    ActiveCell.Offset(-1, 0).Activate
+                    ActiveCell.Offset(1, 0).Activate
                 Wend
-                ActiveCell.Value = strdate
+                ActiveCell.Value = "TUR"
                 ActiveCell.Offset(0, 1).Activate
-                ActiveCell.Value = strprice
-                ActiveCell.Offset(0, -1).Activate
+                ActiveCell.Value = nxtdate
+                ActiveCell.Offset(0, 1).Activate
+                ActiveCell.Value = nxtprice
+                ActiveCell.Offset(0, -2).Activate
+                strprice = nxtprice
+                strdate = nxtdate
                 trade = True
             End If
         End If
-        If trade = True Then
-            If chng >= 30 Then
-                
+       
+        End If
                 
                 
         i = i - 1
