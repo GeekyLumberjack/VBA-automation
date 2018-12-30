@@ -2,6 +2,11 @@ Sub ETF()
 
 Dim ie As Object
 Dim fend As Boolean
+Dim stcomp As Date
+Dim rmquest, oldrmquest As String
+Dim quest As String
+
+
 Set ie = CreateObject("InternetExplorer.Application")
 'Dim ele As HTMLElementCollection
 fend = False
@@ -30,9 +35,18 @@ With ie
         Else
             MsgBox (ele(i).innerText)
             fend = True
+            oldrmquest = ele(i).getElementsByTagName("td")(0).innerText
+            rmquest = Replace(oldrmquest, ChrW(8206), "")
         End If
         End If
         i = i - 1
     Wend
     .Quit
 End With
+
+
+    
+
+
+
+End Sub
