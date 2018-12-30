@@ -1,11 +1,12 @@
 Sub ETF()
 
 Dim ie As Object
-Dim fend As Boolean
-Dim stcomp As Date
+Dim fend, trade As Boolean
+Dim strdate, trdate, enddate As Date
 Dim rmquest, oldrmquest As String
 Dim quest As String
-
+Dim chng1, chng As Variant
+Dim strprice, tradeprice, endprice As Variant
 
 Set ie = CreateObject("InternetExplorer.Application")
 'Dim ele As HTMLElementCollection
@@ -37,8 +38,38 @@ With ie
             fend = True
             oldrmquest = ele(i).getElementsByTagName("td")(0).innerText
             rmquest = Replace(oldrmquest, ChrW(8206), "")
+            strdate = rmquest
+            strprice = le(i).getElementsByTagName("td")(4).innerText
+            MsgBox (strprice)
         End If
         End If
+        If fend = True Then
+        nxtprice = ele(i - 1).getElementsByTagName("td")(4).innerText
+        nxtdate = ele(i - 1).getElementsByTagName("td")(0).innerText
+        chng1 = nxtprice - strprice
+        chng = chng1 / strprice * 100
+        If trade = False Then
+            If chng >= 15 Then
+                strdate = nxtdate
+                strprice = nxtprice
+            End If
+            If chng <= -40 Then
+                Cells(1, 1).Select
+                While IsEmpty(ActiveCell.Value) = False
+                    ActiveCell.Offset(-1, 0).Activate
+                Wend
+                ActiveCell.Value = strdate
+                ActiveCell.Offset(0, 1).Activate
+                ActiveCell.Value = strprice
+                ActiveCell.Offset(0, -1).Activate
+                trade = True
+            End If
+        End If
+        If trade = True Then
+            If chng >= 30 Then
+                
+                
+                
         i = i - 1
     Wend
     .Quit
