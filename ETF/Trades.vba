@@ -1,6 +1,7 @@
-Sub ETF()
+Sub etf()
 
 Dim ie As Object
+Dim etf As Collection
 Dim fend, trade As Boolean
 Dim strdate, trdate, enddate As Date
 Dim rmquest, oldrmquest As String
@@ -8,12 +9,35 @@ Dim quest As String
 Dim chng1, chng As Variant
 Dim strprice, tradeprice, endprice As Variant
 
+Set etf = New Collection
+etf.Add ("TUR")
+etf.Add ("EGPT")
+etf.Add ("EWZ")
+etf.Add ("EWJ")
+etf.Add ("EWY")
+etf.Add ("EWG")
+etf.Add ("EWA")
+etf.Add ("EWC")
+etf.Add ("EWH")
+etf.Add ("EWT")
+etf.Add ("EPOL")
+etf.Add ("EWP")
+etf.Add ("GREK")
+etf.Add ("EZA")
+etf.Add ("EWK")
+etf.Add ("VNM")
+etf.Add ("CYNA")
+
 Set ie = CreateObject("InternetExplorer.Application")
 'Dim ele As HTMLElementCollection
+
+For e = 1 To etf.Count
 fend = False
+trade = False
+
 With ie
 '    .visable = True
-    .navigate "https://finance.yahoo.com/quote/TUR/history?period1=1206680400&period2=1546063200&interval=1d&filter=history&frequency=1d"
+    .navigate "https://finance.yahoo.com/quote/" + etf(e) + "/history?period1=1206680400&period2=1546063200&interval=1d&filter=history&frequency=1d"
     Do While .Busy Or .readyState <> 4
             DoEvents
     Loop
@@ -23,10 +47,12 @@ With ie
    i = ele.Length
    i = i - 8
     While i > 0
+    If i > 1 Then
         'MsgBox (ele(i).innerText)
         If fend = False Then
         If Not ele(i).innerText Like "*2008*" Then
                 .document.parentWindow.execScript "window.scrollBy(0,10000)"
+                'MsgBox (e)
                 Do While .Busy Or .readyState <> 4
                     DoEvents
                 Loop
@@ -34,24 +60,26 @@ With ie
                 i = ele.Length - 7
                ' MsgBox (ele.Length)
         Else
-            MsgBox (ele(i).innerText)
+            'MsgBox (ele(i).innerText)
             fend = True
             oldrmquest = ele(i).getElementsByTagName("td")(0).innerText
             rmquest = Replace(oldrmquest, ChrW(8206), "")
             strdate = rmquest
             strprice = ele(i).getElementsByTagName("td")(4).innerText
-            MsgBox (strprice)
+            'MsgBox (strprice)
         End If
         End If
         If fend = True Then
-        If ele(i - 1).getElementsByTagName("td").Length < 4 And i > 1 Then
-            MsgBox (i)
+        If ele(i - 1).getElementsByTagName("td").Length < 4 Then
+            'MsgBox (i)
             nxtprice = ele(i - 2).getElementsByTagName("td")(4).innerText
             nxtdate = ele(i - 2).getElementsByTagName("td")(0).innerText
         Else
             nxtprice = ele(i - 1).getElementsByTagName("td")(4).innerText
+            'MsgBox (i)
            ' MsgBox (ele(i - 1).getElementsByTagName("td").Length)
             nxtdate = ele(i - 1).getElementsByTagName("td")(0).innerText
+            'MsgBox (ele(i - 2).getElementsByTagName("td")(0).innerText)
         End If
         
         chng1 = nxtprice - strprice
@@ -78,7 +106,6 @@ With ie
                 ActiveCell.Value = "No"
                 ActiveCell.Offset(0, -5).Activate
             End If
-        End If
         If trade = False Then
             If chng >= 15 Then
                 strdate = nxtdate
@@ -89,7 +116,7 @@ With ie
                 While IsEmpty(ActiveCell.Value) = False
                     ActiveCell.Offset(1, 0).Activate
                 Wend
-                ActiveCell.Value = "TUR"
+                ActiveCell.Value = etf(e)
                 ActiveCell.Offset(0, 1).Activate
                 ActiveCell.Value = nxtdate
                 ActiveCell.Offset(0, 1).Activate
@@ -100,16 +127,18 @@ With ie
                 trade = True
             End If
         End If
-       
+        End If
         End If
                 
                 
         i = i - 1
+    End If
     Wend
     .Quit
 End With
-
-
+e = e + 1
+Next
+'ie.Quit
     
 
 
