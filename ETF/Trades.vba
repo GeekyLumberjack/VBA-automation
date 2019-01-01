@@ -1,6 +1,6 @@
 Sub etf()
 
-Dim ie As Object
+Dim ie As InternetExplorer
 Dim etf As Collection
 Dim fend, trade As Boolean
 Dim strdate, trdate, enddate As Date
@@ -28,13 +28,13 @@ etf.Add ("EWK")
 etf.Add ("VNM")
 etf.Add ("CYNA")
 
-Set ie = CreateObject("InternetExplorer.Application")
+Set ie = New InternetExplorer
 'Dim ele As HTMLElementCollection
 
 For e = 1 To etf.Count
 fend = False
 trade = False
-
+ie.Visible = True
 With ie
 '    .visable = True
     .navigate "https://finance.yahoo.com/quote/" + etf(e) + "/history?period1=1206680400&period2=1546063200&interval=1d&filter=history&frequency=1d"
@@ -86,6 +86,18 @@ With ie
         chng = chng1 / strprice * 100
        ' MsgBox (chng)
         If trade = True Then
+        If i < ele.Length / 4 Then
+        MsgBox ("3/4 of the way done")
+        End If
+        If i < ele.Length / 4 * 2 Then
+        MsgBox ("3/4 of the way done")
+        End If
+        If i < ele.Length / 4 * 2 + ele.Length / 4 Then
+        MsgBox ("3/4 of the way done")
+        End If
+        If i < ele.Length - ele.Length / 4 Then
+        MsgBox ("3/4 of the way done")
+        End If
             If chng >= 30 Then
                 trade = False
                 ActiveCell.Offset(0, 3).Activate
